@@ -1,13 +1,15 @@
 import BpmnViewer from 'bpmn-js';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MOVIE_BOOKING_BPMN, MOVIE_BOOKING_BPMN_TIMER } from './BpmnXml';
 import './App.css';
 import useBpmnProcess from './useBpmnProcess';
 import { renderStart, renderEnd, renderSelectShowtime, renderSelectPaymentMethod, renderSelectSeats, renderSelectMovie } from './screens';
 
 function App() {
+  const BPMN_XML = MOVIE_BOOKING_BPMN
   const canvas = useRef();
-  const [process, processInstance, instanceState, userTask] = useBpmnProcess('MovieBookingProcess', MOVIE_BOOKING_BPMN_TIMER);
+  const [showDebugger, setShowDebugger] = useState(false);
+  const [process, processInstance, instanceState, userTask] = useBpmnProcess('MovieBookingProcess', BPMN_XML);
 
   const currentScreen = (() => {
     switch (userTask && userTask.id) {
@@ -29,6 +31,10 @@ function App() {
     }
   })();
 
+
+  /**
+   * --------------- Debugger ------------------
+   */
   useEffect(() => {
     const viewer = new BpmnViewer();
     let currentTokenOverlayId = null;
@@ -36,11 +42,11 @@ function App() {
 
     if (canvas.current) {
       viewer.attachTo(canvas.current);
-      viewer.importXML(MOVIE_BOOKING_BPMN, undefined, () => {
+      viewer.importXML(BPMN_XML, undefined, () => {
         viewer.get('canvas').zoom('fit-viewport');
         if (processInstance) {
           const drawToken = (activities) => {
-            const active = activities.filter(a => a.phase === 'ACTIVE'); 
+            const active = activities.filter(a => a.phase === 'ACTIVE' || a.phase === 'READY'); 
             if (active.length > 0) {
               currentTokenOverlayId = viewer.get('overlays').add(active[0].id, {
                 position: { bottom: 0, right: 0 },
@@ -66,15 +72,22 @@ function App() {
     }
   }, [canvas, processInstance]);
 
+  function toggleDebugger() {
+    setShowDebugger(!showDebugger);
+  }
+
   return (
-    <div className="App">
-      <div className="debugger">
+    <div className={`App ${showDebugger ? 'Debug' : ''}`}>
+      <div className="Debugger">
         <div style={{ width: '100%', height: '300px' }} className="canvas" ref={canvas}></div>
         <hr />
       </div>
       {currentScreen}
+      <div className="BottomBar">
+        <button onClick={toggleDebugger}>Toggle Debugger</button>
+      </div>
     </div>
-  )
+  );
 }
 
 export default App;

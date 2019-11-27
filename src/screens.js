@@ -24,7 +24,7 @@ export function renderEnd(process, processInstance, instanceState, _userTask) {
     <div className="App">
       <h1>Enjoy your movie!</h1>
       <br />
-      <h2><span color="gray">Movie:</span> {selectedMovie} <span color="gray">Seat:</span> {selectedSeat}</h2>
+      <h2><span style={{ color: 'gray'}}>Movie:</span> {selectedMovie} <span style={{ color: 'gray'}}>Seat:</span> {selectedSeat}</h2>
       <h2>{selectedShowtime}</h2>
       <hr />
       <div>

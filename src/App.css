@@ -1,22 +1,38 @@
 .App {
   text-align: center;
+  padding-bottom: 50px;
 }
 
-.App-logo {
-  height: 40vmin;
+.App.Debug {
+  padding-top: 300px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.App.Debug .Debugger {
+  top: 0;
+}
+
+.Debugger {
+  position: absolute;
+  top: -300px;
+  left: 0;
+  right: 0;
+  height: 300px;
+}
+
+.BottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.10);
+
+  padding-left: 25px;
+  padding-right: 25px;
+
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #09d3ac;
-}
