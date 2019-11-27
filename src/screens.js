@@ -126,3 +126,15 @@ export function renderSelectPaymentMethod(_process, processInstance, _instanceSt
     </div>
   );
 }
+
+export function renderDebugger(instanceState, from, to, nextStep) {
+  return (
+    <>
+      <h3>{from} -> {to}</h3>
+      <button style={{ background: 'red', color: 'white' }} onClick={nextStep}>Next Step</button>
+      <br />
+      <br />
+      <textarea rows="20" cols="80" defaultValue={JSON.stringify(instanceState, null, 2)} />
+    </>
+  );
+}

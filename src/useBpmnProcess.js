@@ -1,7 +1,7 @@
 import * as Engine from 'neo-bpmn-engine';
 import { useState, useEffect } from 'react';
 
-export default function useBpmnProcess(processId, bpmnXml) {
+export default function useBpmnProcess(processId, bpmnXml, shouldPassTokenHook) {
   const [process, setProcess] = useState(null);
   const [processInstance, setProcessInstance] = useState(null);
   const [instanceState, setInstanceState] = useState(null);
@@ -14,7 +14,7 @@ export default function useBpmnProcess(processId, bpmnXml) {
 
     // Initialize the engine with bpmn xml and attach listeners
     const init = async () => {
-      const _process = await Engine.BpmnProcess.fromXml(processId, bpmnXml);
+      const _process = await Engine.BpmnProcess.fromXml(processId, bpmnXml, { shouldPassTokenHook });
 
       instanceSub = _process.getInstance$().subscribe((newInstance) => {
         setProcessInstance(newInstance);

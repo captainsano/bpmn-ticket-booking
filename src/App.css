@@ -31,8 +31,8 @@
   padding-right: 25px;
 
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
 }
 

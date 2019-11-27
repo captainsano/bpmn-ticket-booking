@@ -3,15 +3,30 @@ import React, { useEffect, useRef, useState } from 'react';
 import { MOVIE_BOOKING_BPMN, MOVIE_BOOKING_BPMN_TIMER } from './BpmnXml';
 import './App.css';
 import useBpmnProcess from './useBpmnProcess';
-import { renderStart, renderEnd, renderSelectShowtime, renderSelectPaymentMethod, renderSelectSeats, renderSelectMovie } from './screens';
+import { renderStart, renderEnd, renderSelectShowtime, renderSelectPaymentMethod, renderSelectSeats, renderSelectMovie, renderDebugger } from './screens';
 
 function App() {
   const BPMN_XML = MOVIE_BOOKING_BPMN
   const canvas = useRef();
   const [showDebugger, setShowDebugger] = useState(false);
-  const [process, processInstance, instanceState, userTask] = useBpmnProcess('MovieBookingProcess', BPMN_XML);
+  const [stepWaiter, setStepWaiter] = useState(null);
 
+  const waiterHook = async (_, __, from, to) => {
+    return true;
+    // return new Promise((resolve) => setStepWaiter({ from, to, resolve }));
+  }
+
+  /**
+   * Use the engine, adapted for ReactJS
+   */
+  const [process, processInstance, instanceState, userTask] = useBpmnProcess('MovieBookingProcess', BPMN_XML, waiterHook);
+
+  /**
+   * Render screens based on the current user task or state
+   */
   const currentScreen = (() => {
+    if (stepWaiter) return renderDebugger(instanceState, stepWaiter.from, stepWaiter.to, nextStep);
+
     switch (userTask && userTask.id) {
       case 'SelectShowtime': return renderSelectShowtime(process, processInstance, instanceState, userTask);
       case 'SelectMovie': return renderSelectMovie(process, processInstance, instanceState, userTask);
@@ -21,12 +36,14 @@ function App() {
         if (!processInstance) return renderStart(process, processInstance, instanceState, userTask);
         if (instanceState && instanceState.status.isEnded) return renderEnd(process, processInstance, instanceState, userTask);
 
-        return (
-          <>
-            <h5>Unknown state</h5>
-            <textarea rows="20" cols="80" defaultValue={JSON.stringify(instanceState, null, 2)} />
-          </>
-        );
+        return null;
+        // For error handling
+        // return (
+        //   <>
+        //     <h5>Unknown state</h5>
+        //     <textarea rows="20" cols="80" defaultValue={JSON.stringify(instanceState, null, 2)} />
+        //   </>
+        // );
       }
     }
   })();
@@ -70,10 +87,17 @@ function App() {
       stateSub && stateSub.unsubscribe();
       viewer.detach();
     }
-  }, [canvas, processInstance]);
+  }, [canvas, BPMN_XML, processInstance]);
 
   function toggleDebugger() {
     setShowDebugger(!showDebugger);
+  }
+
+  function nextStep() {
+    if (stepWaiter) {
+      stepWaiter.resolve(true);
+      setStepWaiter(null);
+    }
   }
 
   return (
