@@ -20,27 +20,21 @@ export function renderEnd(process, processInstance, instanceState, _userTask) {
     process.start();
   }
 
-  function getDuration() {
-    var date = new Date(null);
-    date.setMilliseconds(+new Date() - instanceState.creationTime + 1); // specify value for SECONDS here
-    return date.toISOString().substr(11, 8);
-  }
-
   return (
     <div className="App">
       <h1>Enjoy your movie!</h1>
       <br />
-      <h2>{selectedMovie}</h2>
-      <h2>{selectedSeat}</h2>
+      <h2><span color="gray">Movie:</span> {selectedMovie} <span color="gray">Seat:</span> {selectedSeat}</h2>
       <h2>{selectedShowtime}</h2>
       <hr />
       <div>
         <div>{processInstance.getId()}</div>
-        <div>Elapsed: {getDuration()}</div>
       </div>
       <hr />
       <br />
       <button onClick={startInstance}>Start a new booking</button>
+      <hr />
+      <textarea rows="20" cols="80" defaultValue={JSON.stringify(instanceState, null, 2)} />
     </div>
   );
 }
