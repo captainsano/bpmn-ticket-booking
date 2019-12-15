@@ -1,12 +1,12 @@
 import BpmnViewer from 'bpmn-js';
 import React, { useEffect, useRef, useState } from 'react';
-import { MOVIE_BOOKING_BPMN, MOVIE_BOOKING_BPMN_TIMER } from './BpmnXml';
+import { MOVIE_BOOKING_BPMN, MOVIE_BOOKING_BPMN_TIMER, MOVIE_BOOKING_SCRIPT_TASK } from './BpmnXml';
 import './App.css';
 import useBpmnProcess from './useBpmnProcess';
 import { renderStart, renderEnd, renderSelectShowtime, renderSelectPaymentMethod, renderSelectSeats, renderSelectMovie, renderDebugger } from './screens';
 
 function App() {
-  const BPMN_XML = MOVIE_BOOKING_BPMN
+  const BPMN_XML = MOVIE_BOOKING_SCRIPT_TASK
   const canvas = useRef();
   const [showDebugger, setShowDebugger] = useState(false);
   const [stepWaiter, setStepWaiter] = useState(null);
@@ -37,13 +37,6 @@ function App() {
         if (instanceState && instanceState.status.isEnded) return renderEnd(process, processInstance, instanceState, userTask);
 
         return null;
-        // For error handling
-        // return (
-        //   <>
-        //     <h5>Unknown state</h5>
-        //     <textarea rows="20" cols="80" defaultValue={JSON.stringify(instanceState, null, 2)} />
-        //   </>
-        // );
       }
     }
   })();

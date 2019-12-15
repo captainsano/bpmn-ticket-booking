@@ -14,6 +14,12 @@ export default function useBpmnProcess(processId, bpmnXml, shouldPassTokenHook) 
 
     // Initialize the engine with bpmn xml and attach listeners
     const init = async () => {
+      Engine.provideService('myCustomService', { 
+        hello() {
+          console.log('hello');
+        }
+      });
+
       const _process = await Engine.BpmnProcess.fromXml(processId, bpmnXml, { shouldPassTokenHook });
 
       instanceSub = _process.getInstance$().subscribe((newInstance) => {
